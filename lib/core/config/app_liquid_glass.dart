@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppLiquidGlass {
-  static const bool enabled = false;
+  static const bool enabled = true;
 
   static const double blurSigma = 0;
   static const double spread = 1;
@@ -13,7 +13,7 @@ class AppLiquidGlass {
   static const double tintFeather = 44;
 
   static Color navTint(ColorScheme cs) =>
-      cs.surfaceContainerHigh.withValues(alpha: 0);
+      cs.surface.withValues(alpha: 0.16);
 
   static Color panelTint(ColorScheme cs) => cs.surface.withValues(alpha: 0.24);
 }

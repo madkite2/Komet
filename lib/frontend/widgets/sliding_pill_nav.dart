@@ -135,6 +135,10 @@ class SlidingPillNav extends StatelessWidget {
               (frost ? AppFrost.glassTint(cs) : cs.surfaceContainerHigh));
     final useGradient = glossy && gradient && !liquid;
     final frosted = frost && !liquid && base.a < 1;
+    final cellWidth = geometry.navInnerW / items.length;
+    final rimColor = Colors.white.withValues(
+      alpha: Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.55,
+    );
 
     return Container(
       height: height,
@@ -143,7 +147,9 @@ class SlidingPillNav extends StatelessWidget {
         color: useGradient || liquid ? null : base,
         gradient: useGradient ? GlossyDecor.fillGradient(base) : null,
         borderRadius: BorderRadius.circular(34),
-        border: glossy
+        border: liquid
+            ? Border.all(color: rimColor, width: 0.8)
+            : glossy
             ? GlossyDecor.rimBorder(base)
             : (borderColor != null
                   ? Border.all(color: borderColor!, width: 0.5)
@@ -152,9 +158,9 @@ class SlidingPillNav extends StatelessWidget {
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: liquid ? 0.28 : 0.5),
-                  blurRadius: liquid ? 26 : 20,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withValues(alpha: liquid ? 0.12 : 0.5),
+                  blurRadius: liquid ? 28 : 20,
+                  offset: Offset(0, liquid ? 8 : 10),
                 ),
               ],
       ),
@@ -167,6 +173,9 @@ class SlidingPillNav extends StatelessWidget {
                 child: LiquidGlassSurface(
                   borderRadius: BorderRadius.circular(34),
                   tint: base,
+                  blurSigma: 5,
+                  refraction: 22,
+                  rimWidth: 10,
                 ),
               ),
             ),
@@ -202,16 +211,20 @@ class SlidingPillNav extends StatelessWidget {
           AnimatedPositioned(
             duration: animationDuration,
             curve: Curves.easeOutCubic,
-            left: position * geometry.inactiveWidth + 4,
-            top: 8,
-            bottom: 8,
-            width: geometry.activeWidth - 8,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: cs.primary,
-                borderRadius: BorderRadius.circular(26),
-              ),
-            ),
+            left: liquid
+                ? position * cellWidth + 4
+                : position * geometry.inactiveWidth + 4,
+            top: liquid ? 5 : 8,
+            bottom: liquid ? 5 : 8,
+            width: liquid ? cellWidth - 8 : geometry.activeWidth - 8,
+            child: liquid
+                ? IgnorePointer(child: _LiquidNavIndicator(cs: cs))
+                : DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: cs.primary,
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                  ),
           ),
           SizedBox(
             width: geometry.navInnerW,
@@ -220,7 +233,7 @@ class SlidingPillNav extends StatelessWidget {
                 return AnimatedContainer(
                   duration: animationDuration,
                   curve: Curves.easeOutCubic,
-                  width: _interpWidth(i),
+                  width: liquid ? cellWidth : _interpWidth(i),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(26),
                     child: _PillNavCell(
@@ -231,6 +244,7 @@ class SlidingPillNav extends StatelessWidget {
                       iconSize: iconSize,
                       labelGap: labelGap,
                       iconsOnly: iconsOnly,
+                      stacked: liquid,
                       onTap: () => onTap(i),
                       onLongPress:
                           (onItemLongPress == null || !items[i].longPressable)
@@ -256,6 +270,7 @@ class _PillNavCell extends StatelessWidget {
   final double iconSize;
   final double labelGap;
   final bool iconsOnly;
+  final bool stacked;
   final VoidCallback onTap;
   final void Function(Offset globalPosition)? onLongPress;
 
@@ -267,12 +282,15 @@ class _PillNavCell extends StatelessWidget {
     required this.iconSize,
     required this.labelGap,
     required this.iconsOnly,
+    required this.stacked,
     required this.onTap,
     required this.onLongPress,
   });
 
   Widget _buildIcon() {
-    final color = selected ? cs.onPrimary : cs.onSurface;
+    final color = stacked
+        ? (selected ? cs.primary : cs.onSurface.withValues(alpha: 0.78))
+        : (selected ? cs.onPrimary : cs.onSurface);
     final asset = item.animationAsset;
     if (asset != null) {
       return AnimatedLottieIcon(
@@ -297,7 +315,27 @@ class _PillNavCell extends StatelessWidget {
           : (d) => onLongPress!(d.globalPosition),
       behavior: HitTestBehavior.opaque,
       child: Center(
-        child: iconsOnly
+        child: stacked
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildIcon(),
+                  const SizedBox(height: 3),
+                  Text(
+                    item.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                      color: selected
+                          ? cs.primary
+                          : cs.onSurface.withValues(alpha: 0.78),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              )
+            : iconsOnly
             ? _buildIcon()
             : FittedBox(
                 fit: BoxFit.scaleDown,
@@ -333,6 +371,25 @@ class _PillNavCell extends StatelessWidget {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class _LiquidNavIndicator extends StatelessWidget {
+  final ColorScheme cs;
+
+  const _LiquidNavIndicator({required this.cs});
+
+  @override
+  Widget build(BuildContext context) {
+    return LiquidGlassSurface(
+      borderRadius: BorderRadius.circular(30),
+      tint: cs.primary.withValues(alpha: 0.16),
+      blurSigma: 0,
+      refraction: 14,
+      specular: 0.7,
+      rimWidth: 6,
+      tintFeather: 22,
     );
   }
 }

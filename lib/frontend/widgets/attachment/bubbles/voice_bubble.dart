@@ -60,6 +60,8 @@ class VoiceMessageBubble extends StatefulWidget {
 }
 
 const double _transcriptionMaxHeight = 132;
+const double _voiceControlSize = 44;
+const double _voiceBubbleWidth = 276;
 
 class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
   bool _transcriptionVisible = false;
@@ -218,9 +220,10 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
     final uploading = widget.uploadProgress;
     return GestureDetector(
       onTap: uploading == null ? _toggle : null,
+      behavior: HitTestBehavior.opaque,
       child: Container(
-        width: 32,
-        height: 32,
+        width: _voiceControlSize,
+        height: _voiceControlSize,
         decoration: BoxDecoration(
           color: widget.isMe
               ? widget.cs.onPrimaryContainer.withValues(alpha: 0.12)
@@ -264,7 +267,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                       icon,
                       key: ValueKey(icon),
                       color: _accent,
-                      size: 18,
+                      size: 24,
                     ),
                   );
                 },
@@ -328,7 +331,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
         : widget.cs.primary;
 
     return SizedBox(
-      width: 240,
+      width: _voiceBubbleWidth,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,23 +354,33 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: _requestTranscription,
+                behavior: HitTestBehavior.opaque,
                 child: SizedBox(
-                  width: 20,
-                  height: 32,
+                  width: _voiceControlSize,
+                  height: _voiceControlSize,
                   child: Center(
-                    child: _transcriptionLoading
-                        ? SmallSpinner(
-                            size: 12,
-                            color: widget.textColor.withValues(alpha: 0.6),
-                          )
-                        : Text(
-                            'Т',
-                            style: TextStyle(
-                              color: widget.textColor.withValues(alpha: 0.6),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: widget.textColor.withValues(
+                          alpha: _transcriptionVisible ? 0.18 : 0.1,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: _transcriptionLoading
+                            ? SmallSpinner(
+                                size: 16,
+                                color: widget.textColor.withValues(alpha: 0.7),
+                              )
+                            : Icon(
+                                Symbols.subtitles,
+                                size: 20,
+                                color: widget.textColor.withValues(alpha: 0.7),
+                              ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -377,7 +390,10 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(width: 32, child: Center(child: _buildTimeLabel())),
+              SizedBox(
+                width: _voiceControlSize,
+                child: Center(child: _buildTimeLabel()),
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: AnimatedSize(
@@ -542,8 +558,8 @@ class _SeekableWaveform extends StatefulWidget {
 }
 
 class _SeekableWaveformState extends State<_SeekableWaveform> {
-  static const double _hitHeight = 32;
-  static const double _waveHeight = 26;
+  static const double _hitHeight = _voiceControlSize;
+  static const double _waveHeight = 32;
 
   double _width = 0;
 
