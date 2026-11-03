@@ -173,9 +173,6 @@ class SlidingPillNav extends StatelessWidget {
                 child: LiquidGlassSurface(
                   borderRadius: BorderRadius.circular(34),
                   tint: base,
-                  blurSigma: 5,
-                  refraction: 22,
-                  rimWidth: 10,
                 ),
               ),
             ),
@@ -384,12 +381,12 @@ class _LiquidNavIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return LiquidGlassSurface(
       borderRadius: BorderRadius.circular(30),
-      tint: cs.primary.withValues(alpha: 0.16),
+      tint: cs.onSurface.withValues(alpha: 0.1),
       blurSigma: 0,
-      refraction: 14,
-      specular: 0.7,
-      rimWidth: 6,
-      tintFeather: 22,
+      refraction: 5,
+      spread: 0.5,
+      specular: 0.4,
+      rimWidth: 3,
     );
   }
 }

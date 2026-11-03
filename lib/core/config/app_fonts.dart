@@ -92,9 +92,30 @@ class AppFonts {
 
   static TextTheme textTheme(String id, TextTheme base) {
     final family = resolve(id).fontFamily;
-    if (family == null) return base;
-    return base.apply(fontFamily: family);
+    final themed = family == null ? base : base.apply(fontFamily: family);
+    return _withoutTracking(themed);
   }
+
+  static TextStyle? _noTracking(TextStyle? style) =>
+      style?.copyWith(letterSpacing: 0);
+
+  static TextTheme _withoutTracking(TextTheme t) => t.copyWith(
+    displayLarge: _noTracking(t.displayLarge),
+    displayMedium: _noTracking(t.displayMedium),
+    displaySmall: _noTracking(t.displaySmall),
+    headlineLarge: _noTracking(t.headlineLarge),
+    headlineMedium: _noTracking(t.headlineMedium),
+    headlineSmall: _noTracking(t.headlineSmall),
+    titleLarge: _noTracking(t.titleLarge),
+    titleMedium: _noTracking(t.titleMedium),
+    titleSmall: _noTracking(t.titleSmall),
+    bodyLarge: _noTracking(t.bodyLarge),
+    bodyMedium: _noTracking(t.bodyMedium),
+    bodySmall: _noTracking(t.bodySmall),
+    labelLarge: _noTracking(t.labelLarge),
+    labelMedium: _noTracking(t.labelMedium),
+    labelSmall: _noTracking(t.labelSmall),
+  );
 
   static TextStyle sample(String id, {required double fontSize}) {
     final family = resolve(id).fontFamily;

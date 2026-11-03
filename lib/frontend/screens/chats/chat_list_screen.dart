@@ -1843,9 +1843,9 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
-                                depth: 6,
+                                depth: 0,
                                 child: SizedBox(
-                                  height: 44,
+                                  height: 40,
                                   child: Row(
                                     children: [
                                       Icon(
@@ -2855,18 +2855,20 @@ class _ChatListScreenState extends State<ChatListScreen>
         showFolderActionSheet(context, folder: folder);
       },
       child: GlossyPill(
-        color: isSelected ? cs.primaryContainer : cs.surfaceContainerHigh,
+        color: isSelected
+            ? cs.surfaceContainerHighest
+            : cs.surfaceContainerLow,
         borderRadius: BorderRadius.circular(50),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        depth: 4,
+        depth: 0,
         child: Center(
           child: Text(
             _folderChipLabel(folder),
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isSelected ? cs.onPrimaryContainer : cs.primary,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+              color: cs.onSurface,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -2940,7 +2942,7 @@ class _ChatListScreenState extends State<ChatListScreen>
             ),
           ],
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w400,
             fontStyle: FontStyle.italic,
             height: 1.2,
@@ -2958,7 +2960,7 @@ class _ChatListScreenState extends State<ChatListScreen>
       italic: messageItalic,
       style: TextStyle(
         color: cs.outline,
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w400,
         height: 1.2,
       ),
@@ -3076,7 +3078,7 @@ class _ChatListScreenState extends State<ChatListScreen>
     final story = (_isSelectionMode || widget.forwardMode)
         ? null
         : _storyPreviewFor(storyOwnerId);
-    final avatarRadius = story == null ? 24.0 : 20.0;
+    final avatarRadius = story == null ? 28.0 : 24.0;
 
     final CircleAvatar rawAvatar = CircleAvatar(
       radius: avatarRadius,
@@ -3093,7 +3095,7 @@ class _ChatListScreenState extends State<ChatListScreen>
               name.isNotEmpty ? name[0].toUpperCase() : '?',
               style: TextStyle(
                 color: cs.onSurfaceVariant,
-                fontSize: story == null ? 20 : 17,
+                fontSize: story == null ? 22 : 19,
               ),
             )
           : null,
@@ -3231,7 +3233,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: SizedBox(
-                    height: 48,
+                    height: 56,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -3259,7 +3261,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                                         name,
                                         style: TextStyle(
                                           color: cs.onSurface,
-                                          fontSize: 16,
+                                          fontSize: 17,
                                           fontWeight: FontWeight.w600,
                                           height: 1.1,
                                         ),
@@ -3303,7 +3305,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 time,
                                 style: TextStyle(
                                   color: cs.outline,
-                                  fontSize: 12,
+                                  fontSize: 14,
                                 ),
                               ),
                             ],
